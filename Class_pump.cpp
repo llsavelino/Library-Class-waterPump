@@ -32,12 +32,12 @@ namespace cpump_Lib {
           		Bombs(uint8_t pin, bool state, uint8_t powerLevel = 0)
               	: __Base__(pin, state), power(powerLevel) {}
 
-        	void swapState(bool toChange = 0) override {
+        	void swapState(bool toChange = 0x00) override {
             		(*this)._pump_.state ^= !toChange;
             		digitalWrite(_pump_.pin, _pump_.state);
         	}
 
-        	void analogPower(uint8_t value) override {
+        	void analogPower(uint8_t value = 0x00) override {
             		power = (value & ~(0b00000000));
             		analogWrite(_pump_.pin, power);
         	}
@@ -57,6 +57,24 @@ namespace cpump_Lib {
 		Bombs& operator |=(uint8_t &&value) {
             		power |= (value & ~(0b0000000));
             		analogWrite((*this)._pump_.pin, this->power);
+            		return *(this);
+        	}
+
+		Bombs& operator ++(uint8_t &&value) {
+            		++ power; analogWrite((*this)._pump_.pin, this->power &0xff);
+            		return *(this);
+        	}
+
+		Bombs& operator --(uint8_t &&value) {
+            		-- power; analogWrite((*this)._pump_.pin, this->power &0xff);
+            		return *(this);
+        	}
+
+		Bombs& operator =(const char* ASCII) {
+			int powerL{0};
+			for (auto i{}; i < strlen(ASCII); ++i) powerL += ASCII[i];
+			powerL -= (powerL > 0xff) ? 0xAA : 0x00;
+            		analogWrite((*this)._pump_.pin, powerL);
             		return *(this);
         	}
 
