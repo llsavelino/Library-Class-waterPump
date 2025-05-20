@@ -70,7 +70,7 @@ namespace cpump_Lib {
             		return *(this);
         	}
 
-		Bombs& operator =(const char* ASCII) {
+		Bombs& operator =(const char* ASCII = "") {
 			unsigned short powerL{0};
 			for (auto i{}; i < strlen(ASCII); ++i) powerL += ASCII[i];
 			powerL -= (powerL > 0xff) ? 0xAA : 0x00; analogWrite((*this)._pump_.pin, powerL);
