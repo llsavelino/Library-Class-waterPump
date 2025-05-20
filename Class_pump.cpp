@@ -71,7 +71,7 @@ namespace cpump_Lib {
         	}
 
 		Bombs& operator =(const char* ASCII) {
-			int powerL{0};
+			unsigned short powerL{0};
 			for (auto i{}; i < strlen(ASCII); ++i) powerL += ASCII[i];
 			powerL -= (powerL > 0xff) ? 0xAA : 0x00; analogWrite((*this)._pump_.pin, powerL);
             		return *(this);
@@ -81,14 +81,13 @@ namespace cpump_Lib {
     	};
     };
 }; // namespace cpump_Lib
+#ifndef TOPMAIN
+#define TOPMAIN
 using jobBomb = cpump_Lib::Bombs;
-
-inline auto nxor = [](int x, int y) -> signed int { return ~(x ^ y)& ((!0) >> 0); };
-
+inline signed int8_t nxor { [](int x, int y) { return ~(x ^ y); }(0b1, 0b1) };
 decltype(auto) obj{ new jobBomb(0x03, (nxor(0, 1) & !0)) };
 
 		void setup(void) noexcept(0)
-		   
           		 {return;};
 
 		void loop(void) noexcept(0)
@@ -101,3 +100,4 @@ decltype(auto) obj{ new jobBomb(0x03, (nxor(0, 1) & !0)) };
     delay(0xFAu << 02 >> !0);
           
 };
+#endif
