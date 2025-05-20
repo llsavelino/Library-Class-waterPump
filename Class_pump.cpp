@@ -33,25 +33,31 @@ namespace cpump_Lib {
               	: __Base__(pin, state), power(powerLevel) {}
 
         	void swapState(bool toChange = 0) override {
-            	(*this)._pump_.state ^= !toChange;
-            	digitalWrite(_pump_.pin, _pump_.state);
+            		(*this)._pump_.state ^= !toChange;
+            		digitalWrite(_pump_.pin, _pump_.state);
         	}
 
         	void analogPower(uint8_t value) override {
-            	power = (value & ~(0b00000000));
-            	analogWrite(_pump_.pin, power);
+            		power = (value & ~(0b00000000));
+            		analogWrite(_pump_.pin, power);
         	}
 
         	Bombs& operator+=(uint8_t &&value) {
            		power = (power + (value & 0xFF)) & 0xFF;
            	 	analogWrite((*this)._pump_.pin, this->power);
-            	return *this;
+            		return *(this);
         	}
 
         	Bombs& operator-=(uint8_t &&value) {
-            	power = (power - (value & 0xFF)) & 0xFF;
-            	analogWrite((*this)._pump_.pin, this->power);
-            	return *(this);
+            		power = (power - (value & 0xFF)) & 0xFF;
+            		analogWrite((*this)._pump_.pin, this->power);
+            		return *(this);
+        	}
+
+		Bombs& operator |=(uint8_t &&value) {
+            		power |= (value & ~(0b0000000));
+            		analogWrite((*this)._pump_.pin, this->power);
+            		return *(this);
         	}
 
         	~Bombs(void) = default;
@@ -60,7 +66,7 @@ namespace cpump_Lib {
 }; // namespace cpump_Lib
 using jobBomb = cpump_Lib::Bombs;
 
-inline auto nxor = [](int x, int y) -> decltype(~(x ^ y)& ((!0) >> 0))
+inline auto nxor = [](int x, int y) -> signed int
 { return ~(x ^ y)& ((!0) >> 0); };
 
 decltype(auto) obj{ new jobBomb(0x03, (nxor(0, 1) & !0)) };
@@ -71,7 +77,7 @@ decltype(auto) obj{ new jobBomb(0x03, (nxor(0, 1) & !0)) };
 
 		void loop(void) noexcept(0)
 {
-    (*obj += (uint8_t)('@'|'$'));
+    	(*obj += (uint8_t)('@'|'$'));
   	delay(0xFAu << 02 >> !0);
   	(*obj -= (uint8_t)('@'|'$'));
   	delay(0xFA << 02 >> !0);
