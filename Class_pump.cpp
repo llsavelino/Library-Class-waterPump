@@ -1,3 +1,4 @@
+#include <string.h>
 namespace cpump_Lib {
   
     class __Base__ {
